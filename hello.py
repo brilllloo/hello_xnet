@@ -1,6 +1,9 @@
-f = open("hello.txt", "w")
-
-f.write("Hello, X-NET!\n")
-
-f.close()
+class FileWriter:
+    def __init__(self, path):
+        self.path = path
+    
+    def write(self, msg):
+        f = open(self.path, "w")
+        f.write(msg)
+        f.close()
 
