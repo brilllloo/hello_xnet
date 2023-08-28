@@ -17,4 +17,4 @@ class TestWriteToFile(unittest.TestCase):
             self.assertEqual(content, expected_content)
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(argv=['first-arg-is-ignored'], exit=False)
