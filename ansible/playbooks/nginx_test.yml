@@ -1,0 +1,31 @@
+# --- This playbook is executed only for web app testing ---
+- hosts: "*"
+  become: yes
+  tasks:
+  # CREATE WEB SERVER AND INDEX PAGE
+  - name: Download and install nginx
+    apt:
+      name: nginx
+      state: present
+  - name: Create a custom index page
+    copy:
+      content: "Hello, X-NET."
+      dest: /var/www/html/index.html
+  # CLEAR HTML FOLDER FOR GIT REPO
+  - name: Delete folder and contents
+    file:
+      path: /var/www/html
+      state: absent
+  - name: Create folder again - this time empty
+    file:
+      path: /var/www/html
+      state: directory
+  # CLONE GIT REPO
+  - name: Clone web app from git repo
+    git:
+      repo: "http://172.30.60.172/root/automated-testing.git"
+      dest: /var/www/html
+  # PAUSE TO VIEW THE PAGE BEFORE DESTRUCTION
+  #- name: Pause to view the page before destruction
+  #  pause:
+  #    minutes: 2

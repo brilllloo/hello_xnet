@@ -1,0 +1,39 @@
+- hosts: "*"
+  become: yes
+  tasks:
+  # CLONE (FOR NOW PUBLIC) GIT REPOSITORY
+  - name: Clone git repository
+    git:
+      repo: "https://github.com/brilllloo/hello_xnet.git"
+      dest: /home/notroot/testing
+  # INSTALL PYTHON
+  - name: Install python3
+    apt:
+      name: python3
+      state: present
+  # EXECUTE TEST
+  - name: Execute python unit test
+    become: yes
+    command: python3 test_hello.py
+    args:
+      chdir: /home/notroot/testing
+    register: test_result
+  - name: Create local file
+    file:
+      path: ../../test_result.json
+      owner: root
+      group: root
+      mode: '0644'
+      state: touch
+    delegate_to: localhost
+  - name: Print output to file
+    become: yes
+    copy:
+      content: "{{test_result}}"
+      dest: /builds/root/automated-testing/test_result.json
+    delegate_to: localhost
+  - name: Print file content to console
+    become: yes
+    command: cat /builds/root/automated-testing/test_result.json
+    delegate_to: localhost
+    

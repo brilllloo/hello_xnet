@@ -1,0 +1,40 @@
+stages:
+ - provisioning
+ - configuration
+ - testing
+ - destruction
+
+provision_vm:
+  stage: provisioning
+  script:
+   # TERRAFORM INSTALLATION (according to Terraform doc)
+   #- apt-get update -y
+   #- apt-get install -y gnupg software-properties-common
+   #- wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+   #- gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+   #- echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+   #- apt update
+   #- apt-get install terraform -y
+   # ANSIBLE INSTALLATION
+   #- apt-get install ansible -y
+   - apt upgrade -y
+   - pwd
+   - ls -la
+   - chmod -R 600 ./.ssh # protect ssh folder
+   - ls -la
+   # TERRAFORM EXECUTION
+   - cd ./terraform
+   - terraform init --upgrade
+   - terraform destroy -auto-approve
+   - terraform apply -auto-approve # also kicks off Ansible
+   # KEEP THE VM UP FOR 1 MINUTE
+   - echo "Keeping the VM up for 1 minute ..."
+   - sleep 60
+   - echo "Destroying the VM now ..."
+   # TERRAFORM DESTRUCTION
+   - terraform destroy -auto-approve
+  artifacts:
+    paths:
+      - ./test_result.json
+#  only:
+#  - main
