@@ -4,6 +4,6 @@ class FileWriter:
     
     def write(self, msg):
         f = open(self.path, "w")
-        f.write(msg + "test")
+        f.write(msg)
         f.close()
 
